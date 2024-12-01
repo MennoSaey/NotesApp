@@ -12,8 +12,17 @@
                 HeightRequest="300"
                 Text="{Binding Note.Content}"/>
         
-        <Button Text="Save" 
-                Clicked="OnSaveClicked"/>
+        <HorizontalStackLayout Spacing="10">
+            <Button Text="Save" 
+                    Clicked="OnSaveClicked"
+                    HorizontalOptions="Fill"/>
+            
+            <Button Text="Delete" 
+                    Clicked="OnDeleteClicked"
+                    BackgroundColor="Red"
+                    TextColor="White"
+                    HorizontalOptions="Fill"/>
+        </HorizontalStackLayout>
         
         <Label Text="{Binding Note.CreatedAt, StringFormat='Created: {0}'}"
                FontSize="Small"/>

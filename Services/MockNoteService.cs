@@ -44,7 +44,13 @@ public class MockNoteService : INoteService
         if (note != null)
         {
             _notes.Remove(note);
+            Console.WriteLine($"Deleted note with ID: {id}");
+        }
+        else
+        {
+            Console.WriteLine($"Note with ID: {id} not found");
         }
         await Task.CompletedTask;
     }
+
 }

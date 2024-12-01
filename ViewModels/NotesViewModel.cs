@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using NotesApp.Models;
@@ -44,10 +45,11 @@ public class NotesViewModel : INotifyPropertyChanged
 
     private async Task AddNote()
     {
-        var newNote = new Note 
-        { 
-            Title = "New Note", 
-            Content = "Write something..." 
+        var newNote = new Note
+        {
+            Id = Guid.NewGuid(),
+            Title = "New Note",
+            Content = "Write something..."
         };
         await _noteService.AddNoteAsync(newNote);
         Notes.Add(newNote);
@@ -55,22 +57,47 @@ public class NotesViewModel : INotifyPropertyChanged
 
     private async Task EditNote(Note note)
     {
-        // Create the detail page using service provider to ensure proper dependency injection
         var detailPage = _serviceProvider.GetService<NoteDetailPage>();
-        
-        // Use reflection to set the Note property if it doesn't have a public setter
+
         var noteProperty = detailPage.GetType().GetProperty("Note");
         noteProperty?.SetValue(detailPage, note);
+        detailPage.NoteUpdated += OnNoteUpdated;
+        detailPage.NoteDeleted += OnNoteDeleted;
 
-        // Navigate to the detail page
         await Application.Current.MainPage.Navigation.PushAsync(detailPage);
+    }
+
+    private void OnNoteUpdated(object sender, Note updatedNote)
+    {
+        var existingNote = Notes.FirstOrDefault(n => n.Id == updatedNote.Id);
+        if (existingNote != null)
+        {
+            var index = Notes.IndexOf(existingNote);
+            Notes[index] = updatedNote;
+        }
+    }
+
+    private void OnNoteDeleted(object sender, Note deletedNote)
+    {
+        if (deletedNote != null)
+        {
+            Notes.Remove(deletedNote);
+        }
     }
 
     private async Task DeleteNote(Note note)
     {
-        await _noteService.DeleteNoteAsync(note.Id);
-        Notes.Remove(note);
+        try
+        {
+            await _noteService.DeleteNoteAsync(note.Id);
+            Notes.Remove(note);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error deleting note: {ex.Message}");
+        }
     }
+
 
     public event PropertyChangedEventHandler PropertyChanged;
     protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)

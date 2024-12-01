@@ -114,6 +114,7 @@
 /home/menno/school/NotesApp/obj/Debug/net8.0-android/NotesApp.AssemblyInfoInputs.cache
 /home/menno/school/NotesApp/obj/Debug/net8.0-android/NotesApp.AssemblyInfo.cs
 /home/menno/school/NotesApp/obj/Debug/net8.0-android/NotesApp.csproj.CoreCompileInputs.cache
+/home/menno/school/NotesApp/obj/Debug/net8.0-android/NotesApp.sourcelink.json
 /home/menno/school/NotesApp/obj/Debug/net8.0-android/XamlC.stamp
 /home/menno/school/NotesApp/obj/Debug/net8.0-android/NotesApp.dll
 /home/menno/school/NotesApp/obj/Debug/net8.0-android/NotesApp.pdb
