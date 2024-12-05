@@ -1,0 +1,10 @@
+0000000000000000000000000000000000000000 93285e8f0097285be5e38b81db170237f064a042 MennoSeay <mennosaey@hotmail.com> 1733055533 +0100	commit (initial): MAUI app with local mock data
+93285e8f0097285be5e38b81db170237f064a042 0000000000000000000000000000000000000000 MennoSeay <mennosaey@hotmail.com> 1733055563 +0100	Branch: renamed refs/heads/master to refs/heads/main
+0000000000000000000000000000000000000000 93285e8f0097285be5e38b81db170237f064a042 MennoSeay <mennosaey@hotmail.com> 1733055563 +0100	Branch: renamed refs/heads/master to refs/heads/main
+93285e8f0097285be5e38b81db170237f064a042 0000000000000000000000000000000000000000 MennoSeay <mennosaey@hotmail.com> 1733055685 +0100	Branch: renamed refs/heads/main to refs/heads/main
+93285e8f0097285be5e38b81db170237f064a042 93285e8f0097285be5e38b81db170237f064a042 MennoSeay <mennosaey@hotmail.com> 1733055685 +0100	Branch: renamed refs/heads/main to refs/heads/main
+93285e8f0097285be5e38b81db170237f064a042 46e695a8affb2d0d57f42ab5b5ba030c7361df04 MennoSeay <mennosaey@hotmail.com> 1733055735 +0100	pull origin main --rebase (start): checkout 46e695a8affb2d0d57f42ab5b5ba030c7361df04
+46e695a8affb2d0d57f42ab5b5ba030c7361df04 e20b6ad1ddb7b3ba051c40fe26d40fbd6c750533 MennoSeay <mennosaey@hotmail.com> 1733055737 +0100	pull origin main --rebase (pick): MAUI app with local mock data
+e20b6ad1ddb7b3ba051c40fe26d40fbd6c750533 e20b6ad1ddb7b3ba051c40fe26d40fbd6c750533 MennoSeay <mennosaey@hotmail.com> 1733055737 +0100	pull origin main --rebase (finish): returning to refs/heads/main
+e20b6ad1ddb7b3ba051c40fe26d40fbd6c750533 82cb54ecf5c69a5f0497b3c78b5a47e7c3e87295 MennoSeay <mennosaey@hotmail.com> 1733058868 +0100	commit: added delete button to details page, fixed edit not being displayed on overview
+82cb54ecf5c69a5f0497b3c78b5a47e7c3e87295 24300f8588d0f17f05a8302d2186915c3b25a0c0 MennoSeay <mennosaey@hotmail.com> 1733396948 +0100	commit: changed project structure
