@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("NotesApp.Maui")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0+82cb54ecf5c69a5f0497b3c78b5a47e7c3e87295")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0+17da6c25aee77d9cbf49e6e68275fc29556ea837")]
 [assembly: System.Reflection.AssemblyProductAttribute("NotesApp.Maui")]
 [assembly: System.Reflection.AssemblyTitleAttribute("NotesApp.Maui")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
