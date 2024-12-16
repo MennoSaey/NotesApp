@@ -3,15 +3,10 @@ using NotesApp.Api.Models;
 
 namespace NotesApp.Api.Repositories;
 
-public class MySqlRepositorie : INotesRepository
+public class MySqlRepository(NoteContext context) : INotesRepository
 {
 
-    private readonly NoteContext _context;
-
-    public MySqlRepositorie(NoteContext context)
-    {
-        _context = context;
-    }
+    private readonly NoteContext _context = context;
 
     public IEnumerable<Note> GetAllNotes()
     {

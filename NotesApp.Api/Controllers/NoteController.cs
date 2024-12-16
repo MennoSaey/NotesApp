@@ -1,25 +1,28 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using NotesApp.Api.dto;
 using NotesApp.Api.Models;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/notes")]
 public class NotesController : ControllerBase
 {
     private readonly INotesRepository _notesRepository;
+    private readonly IMapper _mapper;
 
-    public NotesController(INotesRepository notesRepository)
+    public NotesController(INotesRepository notesRepository, IMapper mapper)
     {
         _notesRepository = notesRepository;
+        _mapper = mapper;
     }
 
-    [HttpGet]
-    public ActionResult<IEnumerable<Note>> GetAllNotes()
+    [HttpGet(Name = "GetAllNotes")]
+    public ActionResult GetAllNotes()
     {
-        var notes = _notesRepository.GetAllNotes();
-        return Ok(notes);
+        return Ok(_mapper.Map<IEnumerable<NotesReadDto>>(_notesRepository.GetAllNotes()));
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id}", Name = "GetNoteById")]
     public ActionResult<Note> GetNoteById(int id)
     {
         var note = _notesRepository.GetNoteById(id);
@@ -27,42 +30,41 @@ public class NotesController : ControllerBase
         {
             return NotFound();
         }
-        return Ok(note);
+
+        return Ok(_mapper.Map<NotesReadDto>(note));
     }
 
-    [HttpPost]
-    public ActionResult<Note> CreateNote(Note note)
+    [HttpPost(Name = "CreateNote")]
+    public ActionResult<Note> CreateNote(NotesWriteDto note)
     {
-        var createdNote = _notesRepository.AddNote(note);
-        return CreatedAtAction(nameof(GetNoteById), new { id = createdNote.Id }, createdNote);
+        var newNote = _mapper.Map<Note>(note);
+        var createdNote = _notesRepository.AddNote(newNote);
+        return CreatedAtAction(nameof(GetNoteById), new { id = createdNote.Id }, _mapper.Map<NotesWriteDto>(createdNote));
     }
 
-    [HttpPut("{id}")]
+    [HttpPut("{id}", Name = "UpdateNote")]
     public IActionResult UpdateNote(int id, Note note)
     {
-        if (id != note.Id)
-        {
-            return BadRequest();
-        }
-
-        var updatedNote = _notesRepository.UpdateNote(note);
-        if (updatedNote == null)
+        var existingNote = _notesRepository.GetNoteById(id);
+        if (existingNote == null)
         {
             return NotFound();
         }
 
+        _notesRepository.UpdateNote(note);
         return NoContent();
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id}", Name = "DeleteNote")]
     public IActionResult DeleteNote(int id)
     {
-        var result = _notesRepository.DeleteNote(id);
-        if (!result)
+        var existingNote = _notesRepository.GetNoteById(id);
+        if (existingNote == null)
         {
             return NotFound();
         }
 
+        _notesRepository.DeleteNote(id);
         return NoContent();
     }
 }

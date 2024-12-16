@@ -104,3 +104,5 @@
 /home/menno/school/C#/NotesApp/NotesApp.Api/obj/Debug/net8.0/NotesApp.Api.pdb
 /home/menno/school/C#/NotesApp/NotesApp.Api/obj/Debug/net8.0/NotesApp.Api.genruntimeconfig.cache
 /home/menno/school/C#/NotesApp/NotesApp.Api/obj/Debug/net8.0/ref/NotesApp.Api.dll
+/home/menno/school/C#/NotesApp/NotesApp.Api/bin/Debug/net8.0/AutoMapper.dll
+/home/menno/school/C#/NotesApp/NotesApp.Api/bin/Debug/net8.0/AutoMapper.Extensions.Microsoft.DependencyInjection.dll

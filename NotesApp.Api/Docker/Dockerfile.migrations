@@ -1,0 +1,16 @@
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS base
+WORKDIR /app
+
+# Copy project files and restore dependencies
+COPY NotesApp.Api/*.csproj ./
+RUN dotnet restore
+
+# Copy entire solution
+COPY . .
+
+# Install EF Core tools globally
+RUN dotnet tool install --global dotnet-ef
+ENV PATH="${PATH}:/root/.dotnet/tools"
+
+# Set working directory to the project folder
+WORKDIR /app/NotesApp.Api
