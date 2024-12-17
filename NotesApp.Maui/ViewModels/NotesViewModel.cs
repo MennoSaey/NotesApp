@@ -1,107 +1,149 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using NotesApp.Maui.Models;
 using NotesApp.Maui.Services;
 using NotesApp.Maui.Views;
 
-namespace NotesApp.Maui.ViewModels;
-
-public class NotesViewModel : INotifyPropertyChanged
+namespace NotesApp.Maui.ViewModels
 {
-    private readonly INoteService _noteService;
-    private readonly IServiceProvider _serviceProvider;
-
-    public ObservableCollection<Note> Notes { get; private set; }
-
-    public ICommand AddNoteCommand { get; }
-    public ICommand EditNoteCommand { get; }
-    public ICommand DeleteNoteCommand { get; }
-
-    public NotesViewModel(INoteService noteService, IServiceProvider serviceProvider)
+    public class NotesViewModel : INotifyPropertyChanged
     {
-        _noteService = noteService;
-        _serviceProvider = serviceProvider;
-        Notes = new ObservableCollection<Note>();
+        private readonly INoteService _noteService;
+        private readonly IServiceProvider _serviceProvider;
 
-        LoadNotes();
+        public ObservableCollection<Note> Notes { get; private set; }
 
-        AddNoteCommand = new Command(async () => await AddNote());
-        EditNoteCommand = new Command<Note>(async (note) => await EditNote(note));
-        DeleteNoteCommand = new Command<Note>(async (note) => await DeleteNote(note));
-    }
+        public ICommand AddNoteCommand { get; }
+        public ICommand EditNoteCommand { get; }
+        public ICommand DeleteNoteCommand { get; }
 
-    private async void LoadNotes()
-    {
-        var notes = await _noteService.GetAllNotesAsync();
-        Notes.Clear();
-        foreach (var note in notes)
+        public NotesViewModel(INoteService noteService, IServiceProvider serviceProvider)
         {
-            Notes.Add(note);
+            _noteService = noteService;
+            _serviceProvider = serviceProvider;
+            Notes = new ObservableCollection<Note>();
+
+            // Initialize commands
+            AddNoteCommand = new Command(async () => await AddNote());
+            EditNoteCommand = new Command<Note>(async (note) => await EditNote(note));
+            DeleteNoteCommand = new Command<Note>(async (note) => await DeleteNote(note));
+
+            // Load notes when ViewModel is created
+            LoadNotes();
         }
-    }
 
-    private async Task AddNote()
-    {
-        var newNote = new Note
+        private async void LoadNotes()
         {
-            Id = Guid.NewGuid(),
-            Title = "New Note",
-            Content = "Write something..."
-        };
-        await _noteService.AddNoteAsync(newNote);
-        Notes.Add(newNote);
-    }
-
-    private async Task EditNote(Note note)
-    {
-        var detailPage = _serviceProvider.GetService<NoteDetailPage>();
-
-        var noteProperty = detailPage.GetType().GetProperty("Note");
-        noteProperty?.SetValue(detailPage, note);
-        detailPage.NoteUpdated += OnNoteUpdated;
-        detailPage.NoteDeleted += OnNoteDeleted;
-
-        await Application.Current.MainPage.Navigation.PushAsync(detailPage);
-    }
-
-    private void OnNoteUpdated(object sender, Note updatedNote)
-    {
-        var existingNote = Notes.FirstOrDefault(n => n.Id == updatedNote.Id);
-        if (existingNote != null)
-        {
-            var index = Notes.IndexOf(existingNote);
-            Notes[index] = updatedNote;
+            try
+            {
+                var notes = await _noteService.GetAllNotesAsync();
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    Notes.Clear();
+                    foreach (var note in notes)
+                    {
+                        Notes.Add(note);
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error loading notes: {ex}");
+            }
         }
-    }
 
-    private void OnNoteDeleted(object sender, Note deletedNote)
-    {
-        if (deletedNote != null)
+        private async Task EditNote(Note note)
         {
-            Notes.Remove(deletedNote);
-        }
-    }
+            try
+            {
+                System.Diagnostics.Debug.WriteLine($"Editing note: {note?.Id}, {note?.Title}");
 
-    private async Task DeleteNote(Note note)
-    {
-        try
+                var detailPage = _serviceProvider.GetService<NoteDetailPage>();
+
+                if (detailPage == null)
+                {
+                    System.Diagnostics.Debug.WriteLine("Failed to resolve NoteDetailPage");
+                    return;
+                }
+
+                detailPage.Note = note;
+                detailPage.NoteUpdated += OnNoteUpdated;
+                detailPage.NoteDeleted += OnNoteDeleted;
+
+                await Application.Current.MainPage.Navigation.PushAsync(detailPage);
+
+                // Reload notes after editing
+                LoadNotes();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in EditNote: {ex}");
+            }
+        }
+
+        private async Task AddNote()
         {
-            await _noteService.DeleteNoteAsync(note.Id);
-            Notes.Remove(note);
+            var newNote = new Note
+            {
+                Title = "New Note",
+                Content = "Write something...",
+            };
+
+            try
+            {
+                var addedNote = await _noteService.AddNoteAsync(newNote);
+                if (addedNote != null)
+                {
+                    MainThread.BeginInvokeOnMainThread(() =>
+                    {
+                        Notes.Add(addedNote);
+                    });
+                }
+
+                // Reload notes after adding
+                LoadNotes();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error adding note: {ex}");
+            }
         }
-        catch (Exception ex)
+
+        private async Task DeleteNote(Note note)
         {
-            Debug.WriteLine($"Error deleting note: {ex.Message}");
+            try
+            {
+                await _noteService.DeleteNoteAsync(note.Id);
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    Notes.Remove(note);
+                });
+
+                // Reload notes after deletion
+                LoadNotes();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error deleting note: {ex}");
+            }
         }
-    }
 
+        private void OnNoteUpdated(object sender, Note updatedNote)
+        {
+            LoadNotes();
+        }
 
-    public event PropertyChangedEventHandler PropertyChanged;
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        private void OnNoteDeleted(object sender, Note deletedNote)
+        {
+            LoadNotes();
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }

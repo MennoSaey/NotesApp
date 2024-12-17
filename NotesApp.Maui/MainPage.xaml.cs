@@ -1,4 +1,4 @@
-﻿namespace NotesApp.Maui;
+﻿﻿namespace NotesApp.Maui;
 
 public partial class MainPage : ContentPage
 {

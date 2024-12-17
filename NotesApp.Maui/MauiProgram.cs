@@ -17,7 +17,13 @@ public static class MauiProgram
             });
 
         // Register Services
-        builder.Services.AddSingleton<INoteService, MockNoteService>();
+        builder.Services.AddLogging();
+
+        // Add HttpClient for NoteService
+        builder.Services.AddHttpClient();
+
+        builder.Services.AddSingleton<INoteService, NoteService>();
+        // builder.Services.AddSingleton<INoteService, MockNoteService>();
         
         // Use Transient for ViewModels and Pages to ensure fresh instances
         builder.Services.AddTransient<NotesViewModel>();

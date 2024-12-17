@@ -17,7 +17,7 @@ public partial class NoteDetailPage : ContentPage
         set 
         {
             _note = value;
-            BindingContext = this;
+            BindingContext = _note;
         }
     }
 
@@ -29,15 +29,27 @@ public partial class NoteDetailPage : ContentPage
 
     private async void OnSaveClicked(object sender, EventArgs e)
     {
+        // Update the note with current entry values
         _note.Title = TitleEntry.Text;
         _note.Content = ContentEditor.Text;
         _note.UpdatedAt = DateTime.Now;
 
-        await _noteService.UpdateNoteAsync(_note);
-        
-        NoteUpdated?.Invoke(this, _note);
+        try 
+        {
+            // Update note via service
+            var updatedNote = await _noteService.UpdateNoteAsync(_note);
+            
+            // Raise event with updated note
+            NoteUpdated?.Invoke(this, updatedNote ?? _note);
 
-        await Navigation.PopAsync();
+            // Navigate back
+            await Navigation.PopAsync();
+        }
+        catch (Exception ex)
+        {
+            // Show error to user
+            await DisplayAlert("Error", $"Could not save note: {ex.Message}", "OK");
+        }
     }
 
     private async void OnDeleteClicked(object sender, EventArgs e)
@@ -46,11 +58,22 @@ public partial class NoteDetailPage : ContentPage
         
         if (confirm)
         {
-            await _noteService.DeleteNoteAsync(_note.Id);
-            
-            NoteDeleted?.Invoke(this, _note);
+            try 
+            {
+                // Delete note via service
+                await _noteService.DeleteNoteAsync(_note.Id);
+                
+                // Raise deletion event
+                NoteDeleted?.Invoke(this, _note);
 
-            await Navigation.PopAsync();
+                // Navigate back
+                await Navigation.PopAsync();
+            }
+            catch (Exception ex)
+            {
+                // Show error to user
+                await DisplayAlert("Error", $"Could not delete note: {ex.Message}", "OK");
+            }
         }
     }
 }

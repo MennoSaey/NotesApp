@@ -43,16 +43,17 @@ public class NotesController : ControllerBase
     }
 
     [HttpPut("{id}", Name = "UpdateNote")]
-    public IActionResult UpdateNote(int id, Note note)
+    public IActionResult UpdateNote(int id, NotesUpdateDto note)
     {
+        var updatedNote = _mapper.Map<Note>(note);
         var existingNote = _notesRepository.GetNoteById(id);
         if (existingNote == null)
         {
             return NotFound();
         }
 
-        _notesRepository.UpdateNote(note);
-        return NoContent();
+        _notesRepository.UpdateNote(updatedNote);
+        return Ok(_mapper.Map<NotesReadDto>(updatedNote));
     }
 
     [HttpDelete("{id}", Name = "DeleteNote")]
@@ -65,6 +66,6 @@ public class NotesController : ControllerBase
         }
 
         _notesRepository.DeleteNote(id);
-        return NoContent();
+        return Ok();
     }
 }

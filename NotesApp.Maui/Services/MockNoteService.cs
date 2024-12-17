@@ -1,3 +1,4 @@
+using System.Net.Http.Json;
 using NotesApp.Maui.Models;
 
 namespace NotesApp.Maui.Services;
@@ -10,12 +11,22 @@ public class MockNoteService : INoteService
         new Note { Title = "Meeting Notes", Content = "Discuss project progress" }
     };
 
-    public async Task<List<Note>> GetAllNotesAsync()
+    private readonly HttpClient _httpClient;
+
+    public MockNoteService(HttpClient httpClient)
     {
-        return await Task.FromResult(_notes);
+        _httpClient = httpClient;
     }
 
-    public async Task<Note> GetNoteByIdAsync(Guid id)
+    public async Task<List<Note>> GetAllNotesAsync()
+    {
+        var response = await _httpClient.GetAsync("http://localhost:5000/api/notes");
+        response.EnsureSuccessStatusCode();
+        var notes = await response.Content.ReadFromJsonAsync<List<Note>>();
+        return notes ?? new List<Note>();
+    }
+
+    public async Task<Note> GetNoteByIdAsync(int id)
     {
         return await Task.FromResult(_notes.FirstOrDefault(n => n.Id == id));
     }
@@ -38,7 +49,7 @@ public class MockNoteService : INoteService
         return await Task.FromResult(existingNote);
     }
 
-    public async Task DeleteNoteAsync(Guid id)
+    public async Task DeleteNoteAsync(int id)
     {
         var note = _notes.FirstOrDefault(n => n.Id == id);
         if (note != null)

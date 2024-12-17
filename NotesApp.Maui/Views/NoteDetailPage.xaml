@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="NotesApp.Maui.Views.NoteDetailPage"
@@ -5,29 +6,27 @@
     <VerticalStackLayout Padding="20">
         <Entry x:Name="TitleEntry" 
                Placeholder="Note Title" 
-               Text="{Binding Note.Title}"/>
+               Text="{Binding Title}"/>
         
         <Editor x:Name="ContentEditor" 
                 Placeholder="Note Content" 
                 HeightRequest="300"
-                Text="{Binding Note.Content}"/>
+                Text="{Binding Content}"/>
         
         <HorizontalStackLayout Spacing="10">
             <Button Text="Save" 
-                    Clicked="OnSaveClicked"
-                    HorizontalOptions="Fill"/>
+                    Clicked="OnSaveClicked"/>
             
             <Button Text="Delete" 
                     Clicked="OnDeleteClicked"
                     BackgroundColor="Red"
-                    TextColor="White"
-                    HorizontalOptions="Fill"/>
+                    TextColor="White"/>
         </HorizontalStackLayout>
         
-        <Label Text="{Binding Note.CreatedAt, StringFormat='Created: {0}'}"
+        <Label Text="{Binding CreatedAt, StringFormat='Created: {0:g}'}"
                FontSize="Small"/>
         
-        <Label Text="{Binding Note.UpdatedAt, StringFormat='Last Updated: {0}'}"
+        <Label Text="{Binding UpdatedAt, StringFormat='Last Updated: {0:g}'}"
                FontSize="Small"/>
     </VerticalStackLayout>
 </ContentPage>
